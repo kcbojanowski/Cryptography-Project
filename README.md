@@ -2,7 +2,7 @@
 
 | Project Details   |      |
 | --- | --- | 
-| `Authors` | -[Filip Opilka](https://github.com/FilipOpilka)&nbsp;&nbsp;&nbsp; 405918 <br/>[Kacper Bojanowski](https://github.com/kcbojanowski)&nbsp;&nbsp;&nbsp; 405065
+| `Authors` | [Filip Opilka](https://github.com/FilipOpilka)&nbsp;&nbsp;&nbsp;&nbsp; 405918 <br/>[Kacper Bojanowski](https://github.com/kcbojanowski)&nbsp;&nbsp;&nbsp; 405065
 |`College`| AGH University of Science and Technology
 |`Subject`| Języki Programowania Wyższego Poziomu
 
