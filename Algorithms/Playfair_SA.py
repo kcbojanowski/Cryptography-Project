@@ -48,15 +48,15 @@ class Playfair_SA(object):
         self.total_runs += 1
         shuffled_key = ""
         random.seed(time())
-        prob = random.random()
+        prob = random.random()/10
         shuffle_matrix = Playfair.create_matrix(parent_key)
-        r1 = random.randint(0, 5)
-        r2 = random.randint(0, 5)
+        r1 = random.randint(0, 4)
+        r2 = random.randint(0, 4)
 
         while r1 == r2:
-            r2 = random.randint(0, 5)
+            r2 = random.randint(0, 4)
 
-        if prob <= 0.2:
+        if prob <= 0.02:
             shuffled_key = parent_key[::-1]
         elif prob <= 0.04:
             for i in range(len(shuffle_matrix)):
@@ -76,7 +76,7 @@ class Playfair_SA(object):
             shuffle_matrix[r1] = shuffle_matrix[r2]
             shuffle_matrix[r2] = temp
         elif prob <= 0.1:
-            for i in range(5) :
+            for i in range(5):
                 temp = shuffle_matrix[i][r1]
                 shuffle_matrix[i][r1] = shuffle_matrix[i][r2]
                 shuffle_matrix[i][r2] = temp
@@ -89,10 +89,15 @@ class Playfair_SA(object):
             shuffle_matrix[r1 // 5][r2 % 5] = temp
 
         if not shuffled_key:
-            for i in shuffle_matrix:
-                shuffled_key += str(i)
+            shuffled_key = "".join(elem for sub in shuffle_matrix for elem in sub)
 
         return shuffled_key
+
+    def Matrix2str(self, matrix):
+        key = ""
+        for i in range(5):
+            key += str(matrix[i])
+        return key
 
     def Break_Playfair(self):
         temp = 0.0
@@ -115,26 +120,26 @@ class Playfair_SA(object):
             decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
             parent_fitness = self.Fitness(decrypted_mess)
 
+            while temp > 0.0:
+                for i in range(5000, 0, -1):
+                    child_key = self.Shuffle(parent_key)
+                    decrypted_mess = Playfair.Decrypt_Playfair(self.mess, child_key)
+                    child_fitness = self.Fitness(decrypted_mess)
+                    delta = child_fitness - parent_fitness
+
+                    if delta > 0:
+                        parent_key = child_key
+                        parent_fitness = child_fitness
+                    elif delta < 0 and 1.0/exp((-1 * delta) / temp) > random.random():
+                        parent_key = child_key
+                        parent_fitness = child_fitness
+                temp -= 1
+
+            decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
+            print(decrypted_mess)
+
         except FileNotFoundError:
             print('File with 4grams missing')
-
-        while temp > 0:
-            for i in range(50000, 0, -1):
-                child_key = self.Shuffle(parent_key)
-                decrypted_mess = Playfair.Decrypt_Playfair(self.mess, child_key)
-                child_fitness = self.Fitness(decrypted_mess)
-                delta = child_fitness - parent_fitness
-
-                if delta > 0:
-                    parent_key = child_key
-                    parent_fitness = child_fitness
-                elif delta < 0 and 1.0/exp((-1 * delta) / temp) > random.random():
-                    parent_key = child_key
-                    parent_fitness = child_fitness
-            temp -= 1
-
-        decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
-        print(decrypted_mess)
 
 
 if __name__ == '__main__':

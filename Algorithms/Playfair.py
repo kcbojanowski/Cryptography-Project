@@ -88,7 +88,6 @@ def Decrypt_Playfair(message, key):
     decrypt_mess = []
     matrix = create_matrix(key)
     message = message.upper()
-
     for n in range(0, len(message) - 1, 2):
         l1 = list(index_matrix(matrix, message[n]))
         l2 = list(index_matrix(matrix, message[n + 1]))
