@@ -29,6 +29,7 @@ def create_matrix(key):
 
 
 def index_matrix(matrix, letter):
+
     for i, j in enumerate(matrix):
         if letter in j:
             return i, j.index(letter)
@@ -87,10 +88,11 @@ def Encrypt_Playfair(message, key):
 def Decrypt_Playfair(message, key):
     decrypt_mess = []
     matrix = create_matrix(key)
-    message = message.upper()
-    for n in range(0, len(message) - 1, 2):
-        l1 = list(index_matrix(matrix, message[n]))
-        l2 = list(index_matrix(matrix, message[n + 1]))
+    mess = message.upper()
+    for n in range(0, len(message), 2):
+
+        l1 = list(index_matrix(matrix, mess[n]))
+        l2 = list(index_matrix(matrix, mess[n + 1]))
 
         # Case no.1 - same column
         if l1[1] == l2[1]:

@@ -9,6 +9,7 @@ Approach for breaking a ciphertext made using Playfair using
 Simulated annealing (SA) algorithm. It uses randomization and
 comparision between keys to find a global maxima solution.
 """
+
 class Playfair_SA(object):
 
     ngrams = {}
@@ -106,40 +107,38 @@ class Playfair_SA(object):
         parent_fitness = 0
         child_fitness = 0
 
-        try:
-            if not self.ngrams:
-                self.Read_ngram()
+        if not self.ngrams:
+            self.Read_ngram()
 
-            if len(self.mess) <= 120:
-                temp = 10.0 + (0.087 * (len(self.mess) - 84))
-            elif len(self.mess) <= 130:
-                temp = 12.0
-            else:
-                temp = 10.0
-            parent_key = ''.join(random.choices(string.ascii_uppercase, k=25))
-            decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
-            parent_fitness = self.Fitness(decrypted_mess)
+        if len(self.mess) <= 120:
+            temp = 10.0 + (0.087 * (len(self.mess) - 84))
+        elif len(self.mess) <= 130:
+            temp = 12.0
+        else:
+            temp = 10.0
+        parent_key = ''.join(random.choices(string.ascii_uppercase, k=25))
+        parent_key = parent_key.replace('J', 'I')
+        decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
+        parent_fitness = self.Fitness(decrypted_mess)
 
-            while temp > 0.0:
-                for i in range(5000, 0, -1):
-                    child_key = self.Shuffle(parent_key)
-                    decrypted_mess = Playfair.Decrypt_Playfair(self.mess, child_key)
-                    child_fitness = self.Fitness(decrypted_mess)
-                    delta = child_fitness - parent_fitness
+        while temp > 0.0:
+            for i in range(50000, 0, -1):
+                child_key = self.Shuffle(parent_key)
+                child_key = child_key.replace('J', 'I')
+                decrypted_mess = Playfair.Decrypt_Playfair(self.mess, child_key)
+                child_fitness = self.Fitness(decrypted_mess)
+                delta = child_fitness - parent_fitness
 
-                    if delta > 0:
-                        parent_key = child_key
-                        parent_fitness = child_fitness
-                    elif delta < 0 and 1.0/exp((-1 * delta) / temp) > random.random():
-                        parent_key = child_key
-                        parent_fitness = child_fitness
-                temp -= 1
+                if delta > 0:
+                    parent_key = child_key
+                    parent_fitness = child_fitness
+                elif delta < 0 and 1.0/exp((-1 * delta) / temp) > random.random():
+                    parent_key = child_key
+                    parent_fitness = child_fitness
+            temp -= 1
 
-            decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
-            print(decrypted_mess)
-
-        except FileNotFoundError:
-            print('File with 4grams missing')
+        decrypted_mess = Playfair.Decrypt_Playfair(self.mess, parent_key)
+        print(decrypted_mess)
 
 
 if __name__ == '__main__':
