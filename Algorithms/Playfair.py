@@ -2,6 +2,7 @@
 Encryption and Decryption of Playfair Cipher
 """
 
+
 def create_matrix(key):
     key = key.upper()
     matrix = [[0 for col in range(5)] for row in range(5)]
