@@ -23,7 +23,6 @@ class Playfair_SA(object):
         textgrams = []
         for i in range(len(message)):
             textgrams.append(message[i:i+4])
-
         return textgrams
 
     def Read_ngram(self):
@@ -42,13 +41,13 @@ class Playfair_SA(object):
             if gram in self.ngrams:
                 probability = self.ngrams[gram] / self.total_sum
                 score += log10(probability)
-
+            else: score += log10(0.01 / self.total_sum)
         return score
 
     def Shuffle(self, parent_key):
         self.total_runs += 1
         shuffled_key = ""
-        random.seed(time())
+        random.seed(random.uniform(0, 1000))
         prob = random.random()/10
         shuffle_matrix = Playfair.create_matrix(parent_key)
         r1 = random.randint(0, 4)
@@ -122,10 +121,12 @@ class Playfair_SA(object):
         parent_fitness = self.Fitness(decrypted_mess)
 
         while temp > 0.0:
-            for i in range(50000, 0, -1):
+            for i in range(500000, 0, -1):
                 child_key = self.Shuffle(parent_key)
                 child_key = child_key.replace('J', 'I')
                 decrypted_mess = Playfair.Decrypt_Playfair(self.mess, child_key)
+                if i % 1000:
+                    print(decrypted_mess)
                 child_fitness = self.Fitness(decrypted_mess)
                 delta = child_fitness - parent_fitness
 
