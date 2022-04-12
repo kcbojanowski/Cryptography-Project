@@ -1,6 +1,7 @@
 from tkinter import *
 import Algorithms.Vigenere as vigenere
 import Algorithms.Playfair as playfair
+import Algorithms.Caesar as caesar
 
 
 class Page(Frame):
@@ -60,6 +61,11 @@ class AlgoPage(Page):
                 out = vigenere.Encrypt_Vigenere(message_input, key_input)
                 output.insert(END, out)
 
+            if current_algo == "Ceasar":
+                out = caesar.caesar_encrypt(message_input, key_input)
+                output.insert(END, out)
+
+
         def decrypt():
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END).strip()
@@ -72,6 +78,10 @@ class AlgoPage(Page):
 
             if current_algo == "Vigenere":
                 out = vigenere.Decrypt_Vigenere(message_input, key_input)
+                output.insert(END, out)
+
+            if current_algo == "Ceasar":
+                out = caesar.caesar_decrypt(message_input, key_input)
                 output.insert(END, out)
 
 
