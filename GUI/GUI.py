@@ -1,4 +1,6 @@
 from tkinter import *
+import Algorithms.Vigenere as vigenere
+import Algorithms.Playfair as playfair
 
 
 class Page(Frame):
@@ -13,14 +15,64 @@ class AlgoPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
 
-        label = Label(self, text="Algorithms", font=("BebasNeue-Regular", 15))
+        algoframe = Frame(self)
+        algoframe.pack(side="top", fill="both", expand=True)
+
+        label = Label(algoframe, text="Algorithms", font=("BebasNeue-Regular", 15))
         label.pack(side="top", fill="y", expand=False, pady=10)
 
         options = ["Ceasar", "Playfair", "Vigenere"]
         algorithms = StringVar()
         algorithms.set(options[0])
-        combo = OptionMenu(self, algorithms, *options)
+        combo = OptionMenu(algoframe, algorithms, *options)
         combo.pack(side="top", fill="y", expand=False)
+
+        input_txt = Text(algoframe, height=12, width=30, bg="#CEF3EF")
+        input_txt.pack(side="top", fill="y", expand=True, pady=10)
+
+        key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12))
+        key_label.pack(side="top", anchor=W, expand=False)
+
+        key_txt = Entry(algoframe)
+        key_txt.pack(side="top",anchor=W, fill="y", expand=False, pady=10)
+
+        encrypt_btn = Button(algoframe, text="encrypt", font=("BebasNeue-Regular", 11), width=12,
+                             command=lambda: encrypt())
+        encrypt_btn.pack(side="top", fill="y", expand=False, pady=5)
+
+        decrypt_btn = Button(algoframe, text="decrypt", font=("BebasNeue-Regular", 11), width=12,
+                             command=lambda: decrypt())
+        decrypt_btn.pack(side="top", fill="y", expand=False, pady=5)
+
+        output = Text(algoframe, height=12, width=30, bg="#F3CED8")
+        output.pack(side="top", fill="y", expand=True, pady=10)
+
+        def encrypt():
+            current_algo = algorithms.get()
+            message_input = input_txt.get("1.0", END)
+            key_input = key_txt.get()
+
+            if current_algo == "Playfair":
+                out = playfair.Encrypt_Playfair(message_input, key_input)
+                output.insert(END, out)
+
+            if current_algo == "Vigenere":
+                out = vigenere.Encrypt_Vigenere(message_input, key_input)
+                output.insert(END, out)
+
+        def decrypt():
+            current_algo = algorithms.get()
+            message_input = input_txt.get("1.0", END).strip()
+
+            key_input = key_txt.get().strip()
+
+            if current_algo == "Playfair":
+                out = playfair.Decrypt_Playfair(message_input, key_input)
+                output.insert(END, out)
+
+            if current_algo == "Vigenere":
+                out = vigenere.Decrypt_Vigenere(message_input, key_input)
+                output.insert(END, out)
 
 
 class SSSPage(Page):
