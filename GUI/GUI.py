@@ -20,33 +20,38 @@ class AlgoPage(Page):
         algoframe.pack(side="top", fill="both", expand=True)
 
         label = Label(algoframe, text="Algorithms", font=("BebasNeue-Regular", 15))
-        label.pack(side="top", fill="y", expand=False, pady=10)
+        label.pack(side="top", fill="y", anchor=E, expand=False, pady=10)
 
         options = ["Ceasar", "Playfair", "Vigenere"]
         algorithms = StringVar()
         algorithms.set(options[0])
         combo = OptionMenu(algoframe, algorithms, *options)
-        combo.pack(side="top", fill="y", expand=False)
+        combo.pack(side="top", fill="y", anchor=E, expand=False)
+
+        if algorithms.get() == "Ceasar":
+            crack_btn = Button(algoframe, text="Break", font=("BebasNeue-Regular", 11), width=12, height=15,
+                               command=lambda: break_ceasar())
+            crack_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
 
         input_txt = Text(algoframe, height=12, width=30, bg="#CEF3EF")
-        input_txt.pack(side="top", fill="y", expand=True, pady=10)
+        input_txt.pack(side="top", fill="both", expand=True, pady=10)
 
         key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12))
-        key_label.pack(side="top", anchor=W, expand=False)
+        key_label.pack(side="top", expand=False)
 
         key_txt = Entry(algoframe)
-        key_txt.pack(side="top",anchor=W, fill="y", expand=False, pady=10)
+        key_txt.pack(side="top", fill="y", expand=False, pady=10)
 
         encrypt_btn = Button(algoframe, text="encrypt", font=("BebasNeue-Regular", 11), width=12,
                              command=lambda: encrypt())
-        encrypt_btn.pack(side="top", fill="y", expand=False, pady=5)
+        encrypt_btn.pack(side="top", expand=False, pady=5)
 
         decrypt_btn = Button(algoframe, text="decrypt", font=("BebasNeue-Regular", 11), width=12,
                              command=lambda: decrypt())
-        decrypt_btn.pack(side="top", fill="y", expand=False, pady=5)
+        decrypt_btn.pack(side="top", expand=False, pady=5)
 
         output = Text(algoframe, height=12, width=30, bg="#F3CED8")
-        output.pack(side="top", fill="y", expand=True, pady=10)
+        output.pack(side="top", fill="both", expand=True, pady=10)
 
         def encrypt():
             current_algo = algorithms.get()
@@ -55,16 +60,15 @@ class AlgoPage(Page):
 
             if current_algo == "Playfair":
                 out = playfair.Encrypt_Playfair(message_input, key_input)
-                output.insert(END, out)
+                output.insert("1.0", out)
 
             if current_algo == "Vigenere":
                 out = vigenere.Encrypt_Vigenere(message_input, key_input)
                 output.insert(END, out)
 
             if current_algo == "Ceasar":
-                out = caesar.caesar_encrypt(message_input, key_input)
+                out = caesar.caesar_encrypt(message_input, int(key_input))
                 output.insert(END, out)
-
 
         def decrypt():
             current_algo = algorithms.get()
@@ -81,10 +85,11 @@ class AlgoPage(Page):
                 output.insert(END, out)
 
             if current_algo == "Ceasar":
-                out = caesar.caesar_decrypt(message_input, key_input)
+                out = caesar.caesar_decrypt(message_input, int(key_input))
                 output.insert(END, out)
 
-
+        def break_ceasar():
+            print("hi")
 class SSSPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
@@ -133,5 +138,5 @@ if __name__ == "__main__":
     root = Tk()
     main = MainView(root)
     main.pack(side="top", fill="both", expand=True)
-    root.wm_geometry("800x600")
+    root.wm_geometry("800x800")
     root.mainloop()

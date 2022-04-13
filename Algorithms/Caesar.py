@@ -12,6 +12,7 @@ def caesar_encrypt(plaintext, key):
         for char in text:
             ciphertext = ciphertext + ALPHABET[(ALPHABET.index(char) + key) % ALPHABET_SIZE]
     print("Ciphertext: ",  ciphertext)
+    return ciphertext
 
 
 def caesar_decrypt(ciphertext, key):
@@ -20,6 +21,7 @@ def caesar_decrypt(ciphertext, key):
         for char in text:
             decrypted_text = decrypted_text + ALPHABET[(ALPHABET.index(char) - key) % ALPHABET_SIZE]
     print("Decrypted message: ", decrypted_text)
+    return decrypted_text
 
 
 if __name__ == '__main__':
