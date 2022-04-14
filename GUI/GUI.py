@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import Algorithms.Vigenere as Vigenere
 import Algorithms.Playfair as Playfair
 import Algorithms.Caesar as Caesar
+import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
 
@@ -113,7 +114,9 @@ class AlgoPage(Page):
                 output.insert(END, out)
 
         def break_ceasar():
-            print("hi")
+            message_input = input_txt.get("1.0", END).strip()
+            out = Caesar_hack.caesar_hack(message_input)
+            output.insert(END, out)
 
         def plots():
             msg = input_txt.get("1.0", END).strip().replace(" ", "")
