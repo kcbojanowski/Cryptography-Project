@@ -32,5 +32,3 @@ def RSA_Encrypt(msg, key):
     return binascii.hexlify(encrypted)
 
 
-if __name__ == '__main__':
-    RSA_Encrypt("A message for encryption", )

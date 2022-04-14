@@ -1,9 +1,14 @@
 from tkinter import *
 from tkinter import filedialog
-import Algorithms.Vigenere as vigenere
-import Algorithms.Playfair as playfair
-import Algorithms.Caesar as caesar
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+import Algorithms.Vigenere as Vigenere
+import Algorithms.Playfair as Playfair
+import Algorithms.Caesar as Caesar
+import Algorithms.Plots as Plots
 import RSA.RSA as rsa
+
 
 
 class Page(Frame):
@@ -22,18 +27,25 @@ class AlgoPage(Page):
         algoframe.pack(side="top", fill="both", expand=True)
 
         label = Label(algoframe, text="Algorithms", font=("BebasNeue-Regular", 15))
-        label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
+        label.pack(side="top", fill="y", anchor=NE, expand=False, pady=30, padx=30)
+
+        instr = Label(algoframe, text="Choose an algorithm:", font=("BebasNeue-Regular", 13))
+        instr.pack(side="top", fill="y", anchor=NE, expand=False, padx=30)
 
         options = ["Ceasar", "Playfair", "Vigenere"]
         algorithms = StringVar()
         algorithms.set(options[0])
         combo = OptionMenu(algoframe, algorithms, *options)
-        combo.pack(side="top", fill="y", anchor=W, expand=False, padx=20)
+        combo.pack(side="top", fill="y", anchor=NE, expand=False, padx=30)
 
         if algorithms.get() == "Ceasar":
             crack_btn = Button(algoframe, text="Break", font=("BebasNeue-Regular", 11), width=12, height=15,
                                command=lambda: break_ceasar())
             crack_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
+
+        freq_btn = Button(algoframe, text="Letter plots", font=("BebasNeue-Regular", 11), width=12, height=15,
+                           command=lambda: plots())
+        freq_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
 
         input_txt = Text(algoframe, height=12, width=30, bg="white")
         input_txt.pack(side="top", fill="both", expand=True, pady=10)
@@ -61,15 +73,15 @@ class AlgoPage(Page):
             key_input = key_txt.get()
 
             if current_algo == "Playfair":
-                out = playfair.Encrypt_Playfair(message_input, key_input)
+                out = Playfair.Encrypt_Playfair(message_input, key_input)
                 output.insert("1.0", out)
 
             if current_algo == "Vigenere":
-                out = vigenere.Encrypt_Vigenere(message_input, key_input)
+                out = Vigenere.Encrypt_Vigenere(message_input, key_input)
                 output.insert(END, out)
 
             if current_algo == "Ceasar":
-                out = caesar.caesar_encrypt(message_input, int(key_input))
+                out = Caesar.caesar_encrypt(message_input, int(key_input))
                 output.insert(END, out)
 
         def decrypt():
@@ -79,19 +91,29 @@ class AlgoPage(Page):
             key_input = key_txt.get().strip()
 
             if current_algo == "Playfair":
-                out = playfair.Decrypt_Playfair(message_input, key_input)
+                out = Playfair.Decrypt_Playfair(message_input, key_input)
                 output.insert(END, out)
 
             if current_algo == "Vigenere":
-                out = vigenere.Decrypt_Vigenere(message_input, key_input)
+                out = Vigenere.Decrypt_Vigenere(message_input, key_input)
                 output.insert(END, out)
 
             if current_algo == "Ceasar":
-                out = caesar.caesar_decrypt(message_input, int(key_input))
+                out = Caesar.caesar_decrypt(message_input, int(key_input))
                 output.insert(END, out)
 
         def break_ceasar():
             print("hi")
+
+        def plots():
+            msg = input_txt.get("1.0", END).strip().replace(" ", "")
+            fig = Plots.alphabet_plot(msg)
+            newwindow = Toplevel(self)
+            canvas = FigureCanvasTkAgg(fig, master=newwindow)
+            canvas.draw()
+            canvas.get_tk_widget().pack()
+
+
 
 
 class SSSPage(Page):
@@ -112,7 +134,7 @@ class RSAPage(Page):
         label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
 
         input_txt = Text(rsaframe, height=12, width=30, bg="white")
-        input_txt.pack(side="top", fill="both", expand=True, pady=10)
+        input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
         encrypt_btn = Button(rsaframe, text="Generate keys", font=("BebasNeue-Regular", 11), width=12,
                              command=lambda: generate_keys())
@@ -123,7 +145,7 @@ class RSAPage(Page):
         decrypt_btn.pack(side="top", expand=False, pady=5)
 
         output_rsa = Text(rsaframe, height=12, width=30, bg="white")
-        output_rsa.pack(side="top", fill="both", expand=True, pady=10)
+        output_rsa.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
         def generate_keys():
             rsa.key_pair()
