@@ -76,9 +76,8 @@ class AlgoPage(Page):
         output = Text(algoframe, height=12, width=30, bg="white")
         output.pack(side="top", fill="y", expand=True, pady=10)
 
-
-
         def encrypt():
+            output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END)
             key_input = key_txt.get()
@@ -96,6 +95,7 @@ class AlgoPage(Page):
                 output.insert(END, out)
 
         def decrypt():
+            output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END).strip()
 
@@ -114,9 +114,11 @@ class AlgoPage(Page):
                 output.insert(END, out)
 
         def break_ceasar():
+            output.delete('1.0', END)
             message_input = input_txt.get("1.0", END).strip()
             out = Caesar_hack.caesar_hack(message_input)
             output.insert(END, out)
+
 
         def plots():
             msg = input_txt.get("1.0", END).strip().replace(" ", "")

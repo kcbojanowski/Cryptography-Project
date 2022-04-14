@@ -57,5 +57,5 @@ def caesar_hack(ciphertext):
         if exit:
             break
 
-    print("\n", "Decoded string: ", decoded_string)
+    print("\n", "Decoded : ", decoded_string, "\n")
     return decoded_string
