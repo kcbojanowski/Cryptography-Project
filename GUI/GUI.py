@@ -35,20 +35,28 @@ class AlgoPage(Page):
         options = ["Ceasar", "Playfair", "Vigenere"]
         algorithms = StringVar()
         algorithms.set(options[0])
+
+        def callback(*args):
+            if algorithms.get() != "Ceasar":
+                crack_btn.pack_forget()
+            else:
+                crack_btn.pack(side="left", anchor=W, expand=False, pady=5, padx=10)
+
+        algorithms.trace("w", callback)
         combo = OptionMenu(algoframe, algorithms, *options)
+
         combo.pack(side="top", fill="y", anchor=NE, expand=False, padx=30)
 
-        if algorithms.get() == "Ceasar":
-            crack_btn = Button(algoframe, text="Break", font=("BebasNeue-Regular", 11), width=12, height=15,
-                               command=lambda: break_ceasar())
-            crack_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
+        crack_btn = Button(algoframe, text="Break", font=("BebasNeue-Regular", 11), width=12, height=15,
+                           command=lambda: break_ceasar())
+        crack_btn.pack(side="left", anchor=W, expand=False, pady=5, padx=10)
 
         freq_btn = Button(algoframe, text="Letter plots", font=("BebasNeue-Regular", 11), width=12, height=15,
                            command=lambda: plots())
         freq_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
 
         input_txt = Text(algoframe, height=12, width=30, bg="white")
-        input_txt.pack(side="top", fill="both", expand=True, pady=10)
+        input_txt.pack(side="top", fill="y", expand=True, pady=10)
 
         key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12))
         key_label.pack(side="top", expand=False)
@@ -65,7 +73,9 @@ class AlgoPage(Page):
         decrypt_btn.pack(side="top", expand=False, pady=5)
 
         output = Text(algoframe, height=12, width=30, bg="white")
-        output.pack(side="top", fill="both", expand=True, pady=10)
+        output.pack(side="top", fill="y", expand=True, pady=10)
+
+
 
         def encrypt():
             current_algo = algorithms.get()
@@ -107,7 +117,8 @@ class AlgoPage(Page):
 
         def plots():
             msg = input_txt.get("1.0", END).strip().replace(" ", "")
-            fig = Plots.alphabet_plot(msg)
+            cipher = output.get("1.0", END).strip().replace(" ", "")
+            fig = Plots.alphabet_plot(msg, cipher)
             newwindow = Toplevel(self)
             canvas = FigureCanvasTkAgg(fig, master=newwindow)
             canvas.draw()

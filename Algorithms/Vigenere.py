@@ -25,7 +25,7 @@ def Encrypt_Vigenere(message, keyword):
     for i in range(len(message)):
         en = (ord(message[i]) + ord(key[i])) % 26
         encrypt_mess = encrypt_mess + chr(en + 65)
-    return encrypt_mess
+    return encrypt_mess.lower()
 
 
 def Decrypt_Vigenere(message, keyword):
@@ -36,7 +36,7 @@ def Decrypt_Vigenere(message, keyword):
     for i in range(len(message)):
         dec = (ord(message[i]) - ord(key[i]) + 26) % 26
         decrypt_mess = decrypt_mess + chr(dec + 65)
-    return decrypt_mess
+    return decrypt_mess.lower()
 
 
 if __name__ == '__main__':
