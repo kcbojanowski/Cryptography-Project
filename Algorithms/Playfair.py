@@ -38,18 +38,19 @@ def index_matrix(matrix, letter):
 def Encrypt_Playfair(message, key):
     encrypt_mess = []
     matrix = create_matrix(key)
-    message = message.replace(" ", "").upper()
+    message = message.strip().replace(" ", "").upper()
 
-# adding 'X' in case of two similar symbols next to each other
-    for i, j in zip(message, message[1:]):
-        if i == j:
-            message = message[:message.index(i)] + 'X' + message[message.index(i):]
-
-# adding 'Z' in case of odd number of letters in message
-    if not len(message) % 2:
-        message += 'Z'
-
+# adding 'X' in case of odd number of letters in message
+    if not len(message) % 2 == 0:
+        message += 'X'
+    # adding 'X' in case of two similar symbols next to each other
     for n in range(0, len(message)-1, 2):
+        if message[n] == message[n+1]:
+            message = message[:n + 1] + 'X' + message[n + 1:]
+
+        if not len(message) % 2 == 0:
+            message += 'X'
+
         l1 = list(index_matrix(matrix, message[n]))
         l2 = list(index_matrix(matrix, message[n+1]))
 
@@ -127,5 +128,5 @@ def Decrypt_Playfair(message, key):
 
 
 if __name__ == '__main__':
-    print(Encrypt_Playfair('qwertyuiop', 'kacper'))
+    print(Encrypt_Playfair('it it wednesday my dudes', 'kacper'))
     print(Decrypt_Playfair('wakgypqntk', 'kacper'))

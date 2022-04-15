@@ -6,6 +6,7 @@ ALPHABET_SIZE = 26
 
 
 def caesar_encrypt(plaintext, key):
+    plaintext = plaintext.strip()
     ciphertext = ""
     if " " not in plaintext:
         for text in plaintext.lower():

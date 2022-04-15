@@ -10,8 +10,10 @@ import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
 import ctypes
+import os
 
-
+colors = ["#b8b8ff", "#9381ff", "#f8f7ff", "#ffeedd", "#ffd8be"]
+# colors = [labels, background, textfields, page buttons, other buttons]
 
 class Page(Frame):
     def __init__(self, *args, **kwargs):
@@ -25,13 +27,13 @@ class AlgoPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
 
-        algoframe = Frame(self)
+        algoframe = Frame(self, bg=colors[0])
         algoframe.pack(side="top", fill="both", expand=True)
 
-        label = Label(algoframe, text="Algorithms", font=("BebasNeue-Regular", 15))
+        label = Label(algoframe, text="Algorithms", font=("BebasNeue-Regular", 15), bg=colors[1])
         label.pack(side="top", fill="y", anchor=NE, expand=False, pady=30, padx=30)
 
-        instr = Label(algoframe, text="Choose an algorithm:", font=("BebasNeue-Regular", 13))
+        instr = Label(algoframe, text="Choose an algorithm:", font=("BebasNeue-Regular", 13), bg=colors[1])
         instr.pack(side="top", fill="y", anchor=NE, expand=False, padx=30)
 
         options = ["Ceasar", "Playfair", "Vigenere"]
@@ -50,31 +52,32 @@ class AlgoPage(Page):
         combo.pack(side="top", fill="y", anchor=NE, expand=False, padx=30)
 
         crack_btn = Button(algoframe, text="Break", font=("BebasNeue-Regular", 11), width=12, height=15,
-                           command=lambda: break_ceasar())
+                           bg=colors[4], command=lambda: break_ceasar())
         crack_btn.pack(side="left", anchor=W, expand=False, pady=5, padx=10)
 
         freq_btn = Button(algoframe, text="Letter plots", font=("BebasNeue-Regular", 11), width=12, height=15,
-                           command=lambda: plots())
+                           bg=colors[4], command=lambda: plots())
         freq_btn.pack(side="right", anchor=W, expand=False, pady=5, padx=10)
 
-        input_txt = Text(algoframe, height=12, width=30, bg="white")
+        input_txt = Text(algoframe, height=12, width=30, bg=colors[2])
+
         input_txt.pack(side="top", fill="y", expand=True, pady=10)
 
-        key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12))
+        key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12), bg=colors[1])
         key_label.pack(side="top", expand=False)
 
         key_txt = Entry(algoframe)
         key_txt.pack(side="top", fill="y", expand=False, pady=10)
 
         encrypt_btn = Button(algoframe, text="encrypt", font=("BebasNeue-Regular", 11), width=12,
-                             command=lambda: encrypt())
+                             bg=colors[4], command=lambda: encrypt())
         encrypt_btn.pack(side="top", expand=False, pady=5)
 
         decrypt_btn = Button(algoframe, text="decrypt", font=("BebasNeue-Regular", 11), width=12,
-                             command=lambda: decrypt())
+                             bg=colors[4],command=lambda: decrypt())
         decrypt_btn.pack(side="top", expand=False, pady=5)
 
-        output = Text(algoframe, height=12, width=30, bg="white")
+        output = Text(algoframe, height=12, width=30, bg=colors[2])
         output.pack(side="top", fill="y", expand=True, pady=10)
 
         def encrypt():
@@ -82,7 +85,7 @@ class AlgoPage(Page):
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END)
             key_input = key_txt.get().strip()
-            if key_input != "":
+            if key_input != "" or message_input != "":
                 if current_algo == "Playfair":
                     out = Playfair.Encrypt_Playfair(message_input, key_input)
                     output.insert("1.0", out)
@@ -91,20 +94,21 @@ class AlgoPage(Page):
                     out = Vigenere.Encrypt_Vigenere(message_input, key_input)
                     output.insert(END, out)
 
-                if current_algo == "Ceasar" and key_input.isnumeric():
-                    out = Caesar.caesar_encrypt(message_input, int(key_input))
-                    output.insert(END, out)
-                else:
-                    message("Warning", "Key must be a number")
+                if current_algo == "Ceasar":
+                    if key_input.isnumeric():
+                        out = Caesar.caesar_encrypt(message_input, int(key_input))
+                        output.insert(END, out)
+                    else:
+                        message("Warning", "Key must be a number")
             else:
-                message("Warning", "Enter the key first!")
+                message("Warning", "Enter message and key first!")
 
         def decrypt():
             output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END).strip()
             key_input = key_txt.get().strip()
-            if key_input != "":
+            if key_input != "" or message_input !="":
                 if current_algo == "Playfair":
                     out = Playfair.Decrypt_Playfair(message_input, key_input)
                     output.insert(END, out)
@@ -126,14 +130,16 @@ class AlgoPage(Page):
                 else:
                     message("Warning", "Key must be a number")
             else:
-                message("Warning", "Enter the key first!")
+                message("Warning", "Enter message and key first!")
 
         def break_ceasar():
             output.delete('1.0', END)
             message_input = input_txt.get("1.0", END).strip()
-            out = Caesar_hack.caesar_hack(message_input)
-            output.insert(END, out)
-
+            if message_input !="":
+                out = Caesar_hack.caesar_hack(message_input)
+                output.insert(END, out)
+            else:
+                message("Warning", "Enter the message first!")
 
         def plots():
             msg = input_txt.get("1.0", END).strip().replace(" ", "")
@@ -148,51 +154,76 @@ class AlgoPage(Page):
 class SSSPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
-        label = Label(self, text="SSS", font=("BebasNeue-Regular", 12))
-        label.pack(side="top", fill="both", expand=True)
+
+        sssframe = Frame(self, bg=colors[0])
+        sssframe.pack(side="top", fill="both", expand=True)
 
 
 class RSAPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
 
-        rsaframe = Frame(self)
+        rsaframe = Frame(self, bg=colors[0])
         rsaframe.pack(side="top", fill="both", expand=True)
 
-        label = Label(rsaframe, text="RSA", font=("BebasNeue-Regular", 15))
+        label = Label(rsaframe, text="RSA", font=("BebasNeue-Regular", 15), bg=colors[1])
         label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
 
-        input_txt = Text(rsaframe, height=12, width=30, bg="white")
+        input_txt = Text(rsaframe, height=12, width=30, bg=colors[2])
         input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
-        encrypt_btn = Button(rsaframe, text="Generate keys", font=("BebasNeue-Regular", 11), width=12,
-                             command=lambda: generate_keys())
+        key_btn = Button(rsaframe, text="Generate keys", font=("BebasNeue-Regular", 11), width=12,
+                             bg=colors[4], command=lambda: generate_keys())
+        key_btn.pack(side="top", expand=False, pady=5)
+
+        encrypt_btn = Button(rsaframe, text="Encrypt", font=("BebasNeue-Regular", 11), width=12,
+                             bg=colors[4], command=lambda: encrypt_rsa())
         encrypt_btn.pack(side="top", expand=False, pady=5)
 
-        decrypt_btn = Button(rsaframe, text="Encrypt", font=("BebasNeue-Regular", 11), width=12,
-                             command=lambda: encrypt_rsa())
+        decrypt_btn = Button(rsaframe, text="Decrypt", font=("BebasNeue-Regular", 11), width=12,
+                             bg=colors[4], command=lambda: decrypt_rsa())
         decrypt_btn.pack(side="top", expand=False, pady=5)
 
-        output_rsa = Text(rsaframe, height=12, width=30, bg="white")
+        output_rsa = Text(rsaframe, height=12, width=30, bg=colors[2])
         output_rsa.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
         def generate_keys():
             rsa.key_pair()
+            message("Info", "Pair of keys saved to /RSA folder")
 
         def encrypt_rsa():
             key = ""
             msg = input_txt.get("1.0", END).strip()
-            filename = filedialog.askopenfilename(initialdir="../RSA", title="Select a Key",
-                                                  filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
-            with open(filename, "r") as f:
-                key = f.read()
-            encrypted = rsa.RSA_Encrypt(msg, key)
+            if msg != "":
+                filename = filedialog.askopenfilename(initialdir="../RSA", title="Select a Key",
+                                                      filetypes=(("pem files", "*.pem"), ("all files", "*.*")))
+                with open(filename, "r") as f:
+                    key = f.read()
+                encrypted = rsa.RSA_Encrypt(msg, key)
 
-            if output_rsa.get("1.0", END).strip():
-                output_rsa.forget()
+                if output_rsa.get("1.0", END).strip():
+                    output_rsa.forget()
+                else:
+                    output_rsa.insert(END, encrypted)
             else:
-                output_rsa.insert(END, encrypted)
+                message("Warning", "Enter the message first!")
 
+        def decrypt_rsa():
+            key = ""
+            msg = input_txt.get("1.0", END).strip()
+            if msg != "":
+                filename = filedialog.askopenfilename(initialdir="../RSA", title="Select a Key",
+                                                      filetypes=(("pem files", "*.pem"), ("all files", "*.*")))
+                with open(filename, "r") as f:
+                    key = f.read()
+                decrypted = rsa.RSA_Decrypt(msg, key)
+
+                if output_rsa.get("1.0", END).strip():
+                    output_rsa.delete("1.0", END)
+                else:
+                    output_rsa.insert(END, decrypted)
+            else:
+                message("Warning", "Enter the message first!")
 
 class MainView(Frame):
     def __init__(self, *args, **kwargs):
@@ -202,8 +233,8 @@ class MainView(Frame):
         p3 = RSAPage(self)
 
         container = Frame(self)
-        mainframe = Frame(self)
-        mainframe.pack(side="left", fill="x", anchor=N, expand=False)
+        mainframe = Frame(self, bg=colors[0])
+        mainframe.pack(side="left", fill="both", anchor=N, expand=False)
         container.pack(side="top", fill="both", expand=True)
 
         p1.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
@@ -211,11 +242,11 @@ class MainView(Frame):
         p3.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
 
         title = Label(mainframe, text="Cryptography Tool \n by Kacper Bojanowski & Filip Opilka",
-                      font=("BebasNeue-Regular", 15))
+                      font=("BebasNeue-Regular", 15), bg=colors[1])
         title.pack(side="top", fill="y", anchor=NW, pady=13, padx=10)
 
         # Instruction
-        instruction = Label(mainframe, text="Choose an action:", font=("BebasNeue-Regular", 12))
+        instruction = Label(mainframe, text="Choose an action:", font=("BebasNeue-Regular", 12), bg=colors[1])
         instruction.pack(side="top", fill="y", anchor=NW, pady=15, padx=10)
 
         algo_txt = StringVar()
@@ -223,14 +254,14 @@ class MainView(Frame):
         sss_txt = StringVar()
         sss_txt.set("sss")
         algo_btn = Button(mainframe, textvariable=algo_txt, font=("BebasNeue-Regular", 15),
-                          height=4, width=16, command=p1.show)
+                          bg=colors[3], height=4, width=16, command=p1.show)
         sss_btn = Button(mainframe, textvariable=sss_txt, font=("BebasNeue-Regular", 15),
-                         height=4, width=16, command=p2.show)
+                         bg=colors[3], height=4, width=16, command=p2.show)
 
         rsa_txt = StringVar()
         rsa_txt.set("RSA")
         rsa_btn = Button(mainframe, textvariable=rsa_txt, font=("BebasNeue-Regular", 15),
-                         height=4, width=16, command=p3.show)
+                         bg=colors[3], height=4, width=16, command=p3.show)
 
         algo_btn.pack(side="top", anchor=NW, pady=10, padx=10)
         rsa_btn.pack(side="top", anchor=NW, pady=10, padx=10)
@@ -245,6 +276,8 @@ def message(title, text):
 
 if __name__ == "__main__":
     root = Tk()
+    root.iconbitmap("Cryptoicon.ico")
+    root.title("Simple Cryptography")
     main = MainView(root)
     main.pack(side="top", fill="both", expand=True)
     root.wm_geometry("800x800")
