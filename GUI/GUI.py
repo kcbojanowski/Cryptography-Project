@@ -9,6 +9,7 @@ import Algorithms.Caesar as Caesar
 import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
+import ctypes
 
 
 
@@ -80,38 +81,52 @@ class AlgoPage(Page):
             output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END)
-            key_input = key_txt.get()
+            key_input = key_txt.get().strip()
+            if key_input != "":
+                if current_algo == "Playfair":
+                    out = Playfair.Encrypt_Playfair(message_input, key_input)
+                    output.insert("1.0", out)
 
-            if current_algo == "Playfair":
-                out = Playfair.Encrypt_Playfair(message_input, key_input)
-                output.insert("1.0", out)
+                if current_algo == "Vigenere":
+                    out = Vigenere.Encrypt_Vigenere(message_input, key_input)
+                    output.insert(END, out)
 
-            if current_algo == "Vigenere":
-                out = Vigenere.Encrypt_Vigenere(message_input, key_input)
-                output.insert(END, out)
-
-            if current_algo == "Ceasar":
-                out = Caesar.caesar_encrypt(message_input, int(key_input))
-                output.insert(END, out)
+                if current_algo == "Ceasar" and key_input.isnumeric():
+                    out = Caesar.caesar_encrypt(message_input, int(key_input))
+                    output.insert(END, out)
+                else:
+                    message("Warning", "Key must be a number")
+            else:
+                message("Warning", "Enter the key first!")
 
         def decrypt():
             output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END).strip()
-
             key_input = key_txt.get().strip()
+            if key_input != "":
+                if current_algo == "Playfair":
+                    out = Playfair.Decrypt_Playfair(message_input, key_input)
+                    output.insert(END, out)
 
-            if current_algo == "Playfair":
-                out = Playfair.Decrypt_Playfair(message_input, key_input)
-                output.insert(END, out)
+                if current_algo == "Vigenere":
+                    out = Vigenere.Decrypt_Vigenere(message_input, key_input)
+                    output.insert(END, out)
 
-            if current_algo == "Vigenere":
-                out = Vigenere.Decrypt_Vigenere(message_input, key_input)
-                output.insert(END, out)
-
-            if current_algo == "Ceasar":
-                out = Caesar.caesar_decrypt(message_input, int(key_input))
-                output.insert(END, out)
+                if current_algo == "Ceasar" and key_input.isnumeric():
+                    if " " not in message_input:
+                        out = Caesar.caesar_decrypt(message_input, int(key_input))
+                        output.insert(END, out)
+                    else:
+                        tmp = message_input.split()
+                        out = ""
+                        for i in tmp:
+                            out = out + Caesar.caesar_decrypt(i, int(key_input)) + " "
+                        output.insert(END, out)
+                else:
+                    message("Warning", "Key must be a number")
+            else:
+                message("Warning", "Enter the key first!")
 
         def break_ceasar():
             output.delete('1.0', END)
@@ -128,8 +143,6 @@ class AlgoPage(Page):
             canvas = FigureCanvasTkAgg(fig, master=newwindow)
             canvas.draw()
             canvas.get_tk_widget().pack()
-
-
 
 
 class SSSPage(Page):
@@ -224,6 +237,10 @@ class MainView(Frame):
         sss_btn.pack(side="top", anchor=NW, pady=10, padx=10)
 
         p1.show()
+
+
+def message(title, text):
+    return ctypes.windll.user32.MessageBoxW(0, text, title, 0)
 
 
 if __name__ == "__main__":

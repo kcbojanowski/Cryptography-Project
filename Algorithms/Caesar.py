@@ -7,26 +7,36 @@ ALPHABET_SIZE = 26
 
 def caesar_encrypt(plaintext, key):
     ciphertext = ""
-    #print("Plaintext: ", plaintext)
-    for text in plaintext.lower().split():
-        for char in text:
-            ciphertext = ciphertext + ALPHABET[(ALPHABET.index(char) + key) % ALPHABET_SIZE]
-   #print("Ciphertext: ",  ciphertext)
-    return ciphertext
+    if " " not in plaintext:
+        for text in plaintext.lower():
+            for char in text:
+                ciphertext = ciphertext + ALPHABET[(ALPHABET.index(char) + key) % ALPHABET_SIZE]
+    else:
+        plaintext = plaintext.lower().split()
+        for text in plaintext:
+            for char in text:
+                ciphertext = ciphertext + ALPHABET[(ALPHABET.index(char) + key) % ALPHABET_SIZE]
+            ciphertext = ciphertext + " "
     return ciphertext
 
 
 def caesar_decrypt(ciphertext, key):
     decrypted_text = ""
-    for text in ciphertext:
-        for char in text:
-            decrypted_text = decrypted_text + ALPHABET[(ALPHABET.index(char) - key) % ALPHABET_SIZE]
-    #print("Decrypted message: ", decrypted_text)
-    return decrypted_text
+    if " " not in ciphertext:
+        for text in ciphertext.lower():
+            for char in text:
+                decrypted_text = decrypted_text + ALPHABET[(ALPHABET.index(char) - key) % ALPHABET_SIZE]
+    else:
+        ciphertext = ciphertext.lower().split()
+        for text in ciphertext:
+            for char in text:
+                decrypted_text = decrypted_text + ALPHABET[(ALPHABET.index(char) - key) % ALPHABET_SIZE]
+            decrypted_text = decrypted_text + " "
     return decrypted_text
 
 
 if __name__ == '__main__':
-    plaintext = "apple"
-    ciphertext = ""
-    key = 5
+    plaintext = "aaa bbb cccc ddd"
+    ciphertext = "bbb ccc ddd eee "
+    key = 1
+    print(caesar_decrypt(ciphertext, key))
