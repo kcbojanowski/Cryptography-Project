@@ -19,7 +19,7 @@ def generateKey(string, key):
 
 def Encrypt_Vigenere(message, keyword):
     encrypt_mess = ""
-    message = message.upper()
+    message = message.replace(" ", "").upper()
     key = generateKey(message, keyword)
 
     for i in range(len(message)):
@@ -30,7 +30,7 @@ def Encrypt_Vigenere(message, keyword):
 
 def Decrypt_Vigenere(message, keyword):
     decrypt_mess = ""
-    message = message.upper()
+    message = message.replace(" ", "").upper()
     key = generateKey(message, keyword)
 
     for i in range(len(message)):

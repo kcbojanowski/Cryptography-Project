@@ -39,6 +39,7 @@ def Encrypt_Playfair(message, key):
     encrypt_mess = []
     matrix = create_matrix(key)
     message = message.strip().replace(" ", "").upper()
+    message = message.replace("J", "I")
 
 # adding 'X' in case of odd number of letters in message
     if not len(message) % 2 == 0:
@@ -89,8 +90,9 @@ def Encrypt_Playfair(message, key):
 def Decrypt_Playfair(message, key):
     decrypt_mess = []
     matrix = create_matrix(key)
-    mess = message.replace(" ", "").upper()
-    for n in range(0, len(message), 2):
+    mess = message.replace(" ", "").strip().upper()
+    mess = mess.replace("J", "I")
+    for n in range(0, len(mess)-1, 2):
 
         l1 = list(index_matrix(matrix, mess[n]))
         l2 = list(index_matrix(matrix, mess[n + 1]))

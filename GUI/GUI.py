@@ -44,7 +44,7 @@ class AlgoPage(Page):
             if algorithms.get() != "Ceasar":
                 crack_btn.pack_forget()
             else:
-                crack_btn.pack(side="left", anchor=W, expand=False, pady=5, padx=10)
+                crack_btn.pack(side="bottom", expand=False, pady=5, padx=10)
 
         algorithms.trace("w", callback)
         combo = OptionMenu(algoframe, algorithms, *options)
@@ -61,7 +61,7 @@ class AlgoPage(Page):
 
         input_txt = Text(algoframe, height=12, width=30, bg=colors[2])
 
-        input_txt.pack(side="top", fill="y", expand=True, pady=10)
+        input_txt.pack(side="top", fill="both", expand=True, pady=10)
 
         key_label = Label(algoframe, text="enter key:", font=("BebasNeue-Regular", 12), bg=colors[1])
         key_label.pack(side="top", expand=False)
@@ -78,14 +78,16 @@ class AlgoPage(Page):
         decrypt_btn.pack(side="top", expand=False, pady=5)
 
         output = Text(algoframe, height=12, width=30, bg=colors[2])
-        output.pack(side="top", fill="y", expand=True, pady=10)
+        output.pack(side="top", fill="both", expand=True, pady=10)
 
         def encrypt():
             output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END)
             key_input = key_txt.get().strip()
-            if key_input != "" or message_input != "":
+            if key_input == "" or message_input == "":
+                message("Warning", "Enter message and key first!")
+            else:
                 if current_algo == "Playfair":
                     out = Playfair.Encrypt_Playfair(message_input, key_input)
                     output.insert("1.0", out)
@@ -100,42 +102,38 @@ class AlgoPage(Page):
                         output.insert(END, out)
                     else:
                         message("Warning", "Key must be a number")
-            else:
-                message("Warning", "Enter message and key first!")
 
         def decrypt():
             output.delete('1.0', END)
             current_algo = algorithms.get()
             message_input = input_txt.get("1.0", END).strip()
             key_input = key_txt.get().strip()
-            if key_input != "" or message_input !="":
+            if key_input == "" or message_input == "":
+                message("Warning", "Enter message and key first!")
+            else:
                 if current_algo == "Playfair":
-                    out = Playfair.Decrypt_Playfair(message_input, key_input)
-                    output.insert(END, out)
+                    stripped_msg = message_input.replace(" ", "").strip()
+                    if len(stripped_msg) % 2 == 0:
+                        out = Playfair.Decrypt_Playfair(message_input, key_input)
+                        output.insert(END, out)
+                    else:
+                        message("Warning", "It it not a Playfair ciphertext")
 
                 if current_algo == "Vigenere":
                     out = Vigenere.Decrypt_Vigenere(message_input, key_input)
                     output.insert(END, out)
 
-                if current_algo == "Ceasar" and key_input.isnumeric():
-                    if " " not in message_input:
+                if current_algo == "Ceasar":
+                    if key_input.isnumeric():
                         out = Caesar.caesar_decrypt(message_input, int(key_input))
                         output.insert(END, out)
                     else:
-                        tmp = message_input.split()
-                        out = ""
-                        for i in tmp:
-                            out = out + Caesar.caesar_decrypt(i, int(key_input)) + " "
-                        output.insert(END, out)
-                else:
-                    message("Warning", "Key must be a number")
-            else:
-                message("Warning", "Enter message and key first!")
+                        message("Warning", "Key must be a number")
 
         def break_ceasar():
             output.delete('1.0', END)
             message_input = input_txt.get("1.0", END).strip()
-            if message_input !="":
+            if message_input != "":
                 out = Caesar_hack.caesar_hack(message_input)
                 output.insert(END, out)
             else:
