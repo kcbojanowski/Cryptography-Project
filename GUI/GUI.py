@@ -12,8 +12,8 @@ import RSA.RSA as rsa
 import ctypes
 import os
 
-colors = ["#b8b8ff", "#9381ff", "#f8f7ff", "#ffeedd", "#ffd8be"]
-# colors = [labels, background, textfields, page buttons, other buttons]
+colors = ["#8ecae6", "#219ebc", "#f8f7ff", "#34a0a4", "#76c893"]
+# colors = [background, labels, textfields, page buttons, other buttons]
 
 class Page(Frame):
     def __init__(self, *args, **kwargs):

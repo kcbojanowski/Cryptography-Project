@@ -10,7 +10,7 @@ def key_pair():
     key_pair = RSA.generate(2048)
 
     pubKey = key_pair.publickey()
-    #print(f"Public key:  (n={hex(pubKey.n)}, e={hex(pubKey.e)})")
+    #print(f"Public key:  (n={hex(pubKey.n)}, e={hex(pubKey.e)})")klucz
     pubKeyPEM = pubKey.exportKey()
     public_key = pubKeyPEM.decode('ascii')
     now = datetime.datetime.now()

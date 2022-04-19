@@ -22,7 +22,7 @@ def Encrypt_Vigenere(message, keyword):
     message = message.replace(" ", "").upper()
     key = generateKey(message, keyword)
 
-    for i in range(len(message)):
+    for i in range(len(message)-1):
         en = (ord(message[i]) + ord(key[i])) % 26
         encrypt_mess = encrypt_mess + chr(en + 65)
     return encrypt_mess.lower()
