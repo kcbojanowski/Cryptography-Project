@@ -36,8 +36,18 @@ def caesar_decrypt(ciphertext, key):
     return decrypted_text
 
 
+def is_upper(text):
+    indicators = []
+    for (index, char) in enumerate(text):
+        if char.isupper():
+            indicators.append(index)
+    return indicators
+
+
 if __name__ == '__main__':
-    plaintext = "aaa bbb cccc ddd"
+    plaintext = "Aaa Bbb Ccc Ddd"
     ciphertext = "bbb ccc ddd eee "
     key = 1
-    print(caesar_decrypt(ciphertext, key))
+    #print(caesar_decrypt(ciphertext, key))
+
+    print(is_upper(plaintext))

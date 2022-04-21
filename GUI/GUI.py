@@ -9,7 +9,9 @@ import Algorithms.Caesar as Caesar
 import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
+import SSS.Server as server
 import ctypes
+import threading
 import os
 
 colors = ["#8ecae6", "#219ebc", "#f8f7ff", "#34a0a4", "#76c893"]
@@ -117,7 +119,7 @@ class AlgoPage(Page):
                         out = Playfair.Decrypt_Playfair(message_input, key_input)
                         output.insert(END, out)
                     else:
-                        message("Warning", "It it not a Playfair ciphertext")
+                        message("Warning", "It is not a Playfair ciphertext")
 
                 if current_algo == "Vigenere":
                     out = Vigenere.Decrypt_Vigenere(message_input, key_input)
@@ -155,6 +157,26 @@ class SSSPage(Page):
 
         sssframe = Frame(self, bg=colors[0])
         sssframe.pack(side="top", fill="both", expand=True)
+
+        label = Label(sssframe, text="Shamir's Secret Sharing", font=("BebasNeue-Regular", 15), bg=colors[1])
+        label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
+
+        input_txt = Text(sssframe, height=12, width=30, bg=colors[2])
+        input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+
+        server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
+                         bg=colors[4], command=lambda: server_start())
+        server_btn.pack(side="top", expand=False, pady=5)
+
+        def server_start():
+            thread = threading.Thread(target=server.start())
+            thread.start()
+            #server.start()
+            message("Info", "Server is listening")
+
+
+
+
 
 
 class RSAPage(Page):
