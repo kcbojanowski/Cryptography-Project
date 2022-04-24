@@ -30,8 +30,9 @@ def handle_client(conn, addr):
     conn.close()
 
 def send_msg():
-    conn, addr = server.accept()
-    conn.send("TEST".encode(FORMAT))
+    print("AAA")
+    #conn, addr = server.accept()
+    #conn.send("TEST".encode(FORMAT))
 
 
 def start():

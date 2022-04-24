@@ -10,6 +10,7 @@ import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
 import SSS.Server as server
+import SSS.SSS as sss
 import ctypes
 import threading
 import os
@@ -164,18 +165,31 @@ class SSSPage(Page):
         input_txt = Text(sssframe, height=12, width=30, bg=colors[2])
         input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
+        server_txt = Text(sssframe, height=12, width=30, bg=colors[2])
+        server_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+
         server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
                          bg=colors[4], command=lambda: server_start())
-        server_btn.pack(side="left", expand=False, pady=5)
+        server_btn.pack(side="right", expand=False, padx=5, pady=5)
+
+        sss_btn = Button(sssframe, text="Generate secrets", font=("BebasNeue-Regular", 11), width=12,
+                          bg=colors[4], command=lambda: sharing())
+        sss_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         send_btn = Button(sssframe, text="Send message", font=("BebasNeue-Regular", 11), width=12,
                             bg=colors[4], command=lambda: server.send_msg())
-        send_btn.pack(side="right", expand=False, pady=5)
+        send_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         def server_start():
             thread = threading.Thread(target=server.start)
             thread.start()
             message("Info", "Server is listening")
+
+        def sharing():
+            message_input = int(input_txt.get("1.0", END).strip())
+            shares = sss.generate_shares(5, 3, message_input)
+            print(f'Shares: {", ".join(str(share) for share in shares)}')
+            print(shares)
 
 
 
