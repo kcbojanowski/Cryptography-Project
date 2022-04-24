@@ -180,6 +180,12 @@ class SSSPage(Page):
                             bg=colors[4], command=lambda: server.send_msg())
         send_btn.pack(side="right", expand=False, padx=5, pady=5)
 
+        recon_btn = Button(sssframe, text="Reconstruction", font=("BebasNeue-Regular", 11), width=12,
+                          bg=colors[4], command=lambda: reconstruction())
+        recon_btn.pack(side="right", expand=False, padx=5, pady=5)
+
+        reconstruction_frame = Frame(self)
+
         def server_start():
             thread = threading.Thread(target=server.start)
             thread.start()
@@ -191,9 +197,33 @@ class SSSPage(Page):
             print(f'Shares: {", ".join(str(share) for share in shares)}')
             print(shares)
 
+        def reconstruction():
+            new = Toplevel(self, bg=colors[0])
 
+            new.title("Reconstruction")
+            Label(new, text="Reconstruction", font=("BebasNeue-Regular", 15), bg=colors[1]).grid(row=0, columnspan=3, pady=10)
+            Label(new, text="1: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=1, column=0)
+            Label(new, text="2: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=2, column=0)
+            Label(new, text="3: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=3, column=0)
+            Label(new, text="Reconstructed PIN", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=4, columnspan=3, pady=10)
 
+            e1 = Entry(new, width=30)
+            e1.grid(row=1, column=1, pady=10, padx=5)
+            e1_2 = Entry(new, width=30)
+            e1_2.grid(row=1, column=2, pady=10, padx=5)
 
+            e2 = Entry(new, width=30)
+            e2.grid(row=2, column=1, pady=10, padx=5)
+            e2_2 = Entry(new, width=30)
+            e2_2.grid(row=2, column=2, pady=10, padx=5)
+
+            e3 = Entry(new, width=30)
+            e3.grid(row=3, column=1, pady=10, padx=5)
+            e3_2 = Entry(new, width=30)
+            e3_2.grid(row=3, column=2, pady=10, padx=5)
+
+            recon_text = Text(new, height=16, width=50)
+            recon_text.grid(row=5, columnspan=3, pady=15, padx=15)
 
 
 class RSAPage(Page):
@@ -261,6 +291,7 @@ class RSAPage(Page):
                     output_rsa.insert(END, decrypted)
             else:
                 message("Warning", "Enter the message first!")
+
 
 class MainView(Frame):
     def __init__(self, *args, **kwargs):
