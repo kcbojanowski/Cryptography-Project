@@ -166,12 +166,15 @@ class SSSPage(Page):
 
         server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
                          bg=colors[4], command=lambda: server_start())
-        server_btn.pack(side="top", expand=False, pady=5)
+        server_btn.pack(side="left", expand=False, pady=5)
+
+        send_btn = Button(sssframe, text="Send message", font=("BebasNeue-Regular", 11), width=12,
+                            bg=colors[4], command=lambda: server.send_msg())
+        send_btn.pack(side="right", expand=False, pady=5)
 
         def server_start():
-            thread = threading.Thread(target=server.start())
+            thread = threading.Thread(target=server.start)
             thread.start()
-            #server.start()
             message("Info", "Server is listening")
 
 

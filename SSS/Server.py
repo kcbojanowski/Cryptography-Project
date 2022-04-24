@@ -29,8 +29,13 @@ def handle_client(conn, addr):
 
     conn.close()
 
+def send_msg():
+    conn, addr = server.accept()
+    conn.send("TEST".encode(FORMAT))
+
 
 def start():
+    print("[STARTING] server is starting...")
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
@@ -41,5 +46,4 @@ def start():
 
 
 if __name__ == '__main__':
-    print("[STARTING] server is starting...")
     start()
