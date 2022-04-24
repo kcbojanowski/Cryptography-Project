@@ -1,5 +1,8 @@
 import socket
 import threading
+#from GUI.GUI import console_sending
+import GUI.GUI
+
 
 HEADER = 32
 PORT = 5050
@@ -29,14 +32,16 @@ def handle_client(conn, addr):
 
     conn.close()
 
+
 def send_msg():
     print("AAA")
-    #conn, addr = server.accept()
+     #conn, addr = server.accept()
     #conn.send("TEST".encode(FORMAT))
 
 
 def start():
     print("[STARTING] server is starting...")
+    GUI.GUI.console_sending("AAA")
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
@@ -44,6 +49,7 @@ def start():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+
 
 
 if __name__ == '__main__':

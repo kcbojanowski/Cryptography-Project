@@ -20,9 +20,11 @@ def send(msg):
     print(client.recv(2048).decode(FORMAT))
 
 send("Hello World!")
+
 input()
+'''
 send("Hello Wolrd 2!")
 input()
-send("Hello World 3!")
+send("Hello World 3!")'''
 
 send(DISCONNECT_MESSAGE)

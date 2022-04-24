@@ -162,37 +162,46 @@ class SSSPage(Page):
         label = Label(sssframe, text="Shamir's Secret Sharing", font=("BebasNeue-Regular", 15), bg=colors[1])
         label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
 
-        input_txt = Text(sssframe, height=12, width=30, bg=colors[2])
-        input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+        self.input_txt = Text(sssframe, height=12, width=30, bg=colors[2])
+        self.input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
-        server_txt = Text(sssframe, height=12, width=30, bg=colors[2])
-        server_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+        self.server_txt = Text(sssframe, height=12, width=30, bg=colors[2])
+        self.server_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
 
         server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
-                         bg=colors[4], command=lambda: server_start())
+                         bg=colors[4], command=lambda: self.server_start())
         server_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         sss_btn = Button(sssframe, text="Generate secrets", font=("BebasNeue-Regular", 11), width=12,
-                          bg=colors[4], command=lambda: sharing())
+                          bg=colors[4], command=lambda: self.sharing())
         sss_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         send_btn = Button(sssframe, text="Send message", font=("BebasNeue-Regular", 11), width=12,
-                            bg=colors[4], command=lambda: server.send_msg())
+                            bg=colors[4], command=lambda: server.send_test("testowanie"))
         send_btn.pack(side="right", expand=False, padx=5, pady=5)
 
-        def server_start():
-            thread = threading.Thread(target=server.start)
-            thread.start()
-            message("Info", "Server is listening")
-
-        def sharing():
-            message_input = int(input_txt.get("1.0", END).strip())
-            shares = sss.generate_shares(5, 3, message_input)
-            print(f'Shares: {", ".join(str(share) for share in shares)}')
-            print(shares)
+    def get_server_txt(self):
+        return self.server_txt
 
 
+    def server_start(self):
+        thread = threading.Thread(target=server.start)
+        thread.start()
+        message("Info", "Server is listening")
 
+    def sharing(self):
+        message_input = int(self.input_txt.get("1.0", END).strip())
+        shares = sss.generate_shares(5, 3, message_input)
+        print(f'Shares: {", ".join(str(share) for share in shares)}')
+        print(shares)
+
+    def sending_shares(self):
+        print()
+
+
+def console_sending(message):
+    output = SSSPage.get_server_txt()
+    output.insert(END, message)
 
 
 
