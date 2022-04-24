@@ -177,50 +177,18 @@ class SSSPage(Page):
         sss_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         send_btn = Button(sssframe, text="Send message", font=("BebasNeue-Regular", 11), width=12,
-                            bg=colors[4], command=lambda: server.send_test("testowanie"))
+                            bg=colors[4], command=lambda: server.send_msg())
         send_btn.pack(side="right", expand=False, padx=5, pady=5)
 
         recon_btn = Button(sssframe, text="Reconstruction", font=("BebasNeue-Regular", 11), width=12,
-                          bg=colors[4], command=lambda: reconstruction())
+                          bg=colors[4], command=lambda: self.reconstruction())
         recon_btn.pack(side="right", expand=False, padx=5, pady=5)
 
-        reconstruction_frame = Frame(self)
-
-
-
-
-        def reconstruction():
-            new = Toplevel(self, bg=colors[0])
-
-            new.title("Reconstruction")
-            Label(new, text="Reconstruction", font=("BebasNeue-Regular", 15), bg=colors[1]).grid(row=0, columnspan=3, pady=10)
-            Label(new, text="1: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=1, column=0)
-            Label(new, text="2: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=2, column=0)
-            Label(new, text="3: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=3, column=0)
-            Label(new, text="Reconstructed PIN", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=4, columnspan=3, pady=10)
-
-            e1 = Entry(new, width=30)
-            e1.grid(row=1, column=1, pady=10, padx=5)
-            e1_2 = Entry(new, width=30)
-            e1_2.grid(row=1, column=2, pady=10, padx=5)
-
-            e2 = Entry(new, width=30)
-            e2.grid(row=2, column=1, pady=10, padx=5)
-            e2_2 = Entry(new, width=30)
-            e2_2.grid(row=2, column=2, pady=10, padx=5)
-
-            e3 = Entry(new, width=30)
-            e3.grid(row=3, column=1, pady=10, padx=5)
-            e3_2 = Entry(new, width=30)
-            e3_2.grid(row=3, column=2, pady=10, padx=5)
-
-            recon_text = Text(new, height=16, width=50)
-            recon_text.grid(row=5, columnspan=3, pady=15, padx=15)
-
-    def server_start(self):
-        thread = threading.Thread(target=server.start)
-        thread.start()
-        message("Info", "Server is listening")
+    def sharing(self):
+        message_input = int(self.input_txt.get("1.0", END).strip())
+        shares = sss.generate_shares(5, 3, message_input)
+        print(f'Shares: {", ".join(str(share) for share in shares)}')
+        print(shares)
 
     def get_server_txt(self):
         return self.server_txt
@@ -230,11 +198,37 @@ class SSSPage(Page):
         thread.start()
         message("Info", "Server is listening")
 
-    def sharing(self):
-        message_input = int(self.input_txt.get("1.0", END).strip())
-        shares = sss.generate_shares(5, 3, message_input)
-        print(f'Shares: {", ".join(str(share) for share in shares)}')
-        print(shares)
+
+    def reconstruction(self):
+        new = Toplevel(self, bg=colors[0])
+        new.title("Reconstruction")
+        Label(new, text="Reconstruction", font=("BebasNeue-Regular", 15), bg=colors[1]).grid(row=0, columnspan=3, pady=10)
+        Label(new, text="1: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=1, column=0)
+        Label(new, text="2: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=2, column=0)
+        Label(new, text="3: ", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=3, column=0)
+        Button(new, text="Reconstruct: ", font=("BebasNeue-Regular", 12), bg=colors[3], command=lambda: reconstruct()).grid(row=4, columnspan=3)
+        Label(new, text="Reconstructed PIN", font=("BebasNeue-Regular", 12), bg=colors[1]).grid(row=5, columnspan=3, pady=10)
+        e1 = Entry(new, width=30)
+        e1.grid(row=1, column=1, pady=10, padx=5)
+        e1_2 = Entry(new, width=30)
+        e1_2.grid(row=1, column=2, pady=10, padx=5)
+        e2 = Entry(new, width=30)
+        e2.grid(row=2, column=1, pady=10, padx=5)
+        e2_2 = Entry(new, width=30)
+        e2_2.grid(row=2, column=2, pady=10, padx=5)
+        e3 = Entry(new, width=30)
+        e3.grid(row=3, column=1, pady=10, padx=5)
+        e3_2 = Entry(new, width=30)
+        e3_2.grid(row=3, column=2, pady=10, padx=5)
+        recon_text = Text(new, height=16, width=50)
+        recon_text.grid(row=6, columnspan=3, pady=15, padx=15)
+
+        def reconstruct():
+            shares = [(int(e1.get()), int(e1_2.get())), (int(e2.get()), int(e2_2.get())), (int(e3.get()), int(e3_2.get()))]
+            out = sss.reconstruct_secret(shares)
+            recon_text.insert(END, out)
+            recon_text.delete("1.0", END)
+
 
 def console_sending(message):
     output = SSSPage.get_server_txt()

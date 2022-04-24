@@ -1,9 +1,5 @@
 import socket
 import threading
-#from GUI.GUI import console_sending
-#import GUI.GUI
-import GUI.GUI
-#import GUI.GUI as gui
 
 
 
@@ -52,7 +48,6 @@ def start():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
-
 
 
 if __name__ == '__main__':

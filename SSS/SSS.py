@@ -50,7 +50,7 @@ def generate_shares(n, m, secret):
 
 if __name__ == '__main__':
 
-	t, n = 3, 7
+	t, n = 3, 5
 	secret = 1234
 	print(f'Original Secret: {secret}')
 
