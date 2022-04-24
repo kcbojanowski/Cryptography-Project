@@ -1,7 +1,10 @@
 import socket
 import threading
 #from GUI.GUI import console_sending
+#import GUI.GUI
 import GUI.GUI
+#import GUI.GUI as gui
+
 
 
 HEADER = 32
@@ -41,7 +44,7 @@ def send_msg():
 
 def start():
     print("[STARTING] server is starting...")
-    GUI.GUI.console_sending("AAA")
+    #gui.console_sending("AAA")
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:

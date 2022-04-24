@@ -186,24 +186,8 @@ class SSSPage(Page):
 
         reconstruction_frame = Frame(self)
 
-        def server_start():
-            thread = threading.Thread(target=server.start)
-            thread.start()
-            message("Info", "Server is listening")
-    def get_server_txt(self):
-        return self.server_txt
 
 
-    def server_start(self):
-        thread = threading.Thread(target=server.start)
-        thread.start()
-        message("Info", "Server is listening")
-
-    def sharing(self):
-        message_input = int(self.input_txt.get("1.0", END).strip())
-        shares = sss.generate_shares(5, 3, message_input)
-        print(f'Shares: {", ".join(str(share) for share in shares)}')
-        print(shares)
 
         def reconstruction():
             new = Toplevel(self, bg=colors[0])
@@ -224,9 +208,6 @@ class SSSPage(Page):
             e2.grid(row=2, column=1, pady=10, padx=5)
             e2_2 = Entry(new, width=30)
             e2_2.grid(row=2, column=2, pady=10, padx=5)
-def console_sending(message):
-    output = SSSPage.get_server_txt()
-    output.insert(END, message)
 
             e3 = Entry(new, width=30)
             e3.grid(row=3, column=1, pady=10, padx=5)
@@ -235,6 +216,29 @@ def console_sending(message):
 
             recon_text = Text(new, height=16, width=50)
             recon_text.grid(row=5, columnspan=3, pady=15, padx=15)
+
+    def server_start(self):
+        thread = threading.Thread(target=server.start)
+        thread.start()
+        message("Info", "Server is listening")
+
+    def get_server_txt(self):
+        return self.server_txt
+
+    def server_start(self):
+        thread = threading.Thread(target=server.start)
+        thread.start()
+        message("Info", "Server is listening")
+
+    def sharing(self):
+        message_input = int(self.input_txt.get("1.0", END).strip())
+        shares = sss.generate_shares(5, 3, message_input)
+        print(f'Shares: {", ".join(str(share) for share in shares)}')
+        print(shares)
+
+def console_sending(message):
+    output = SSSPage.get_server_txt()
+    output.insert(END, message)
 
 
 class RSAPage(Page):
