@@ -129,6 +129,3 @@ def Decrypt_Playfair(message, key):
     return "".join(decrypt_mess).lower()
 
 
-if __name__ == '__main__':
-    print(Encrypt_Playfair('it it wednesday my dudes', 'kacper'))
-    print(Decrypt_Playfair('wakgypqntk', 'kacper'))

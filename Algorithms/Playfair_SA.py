@@ -10,6 +10,7 @@ Simulated annealing (SA) algorithm. It uses randomization and
 comparision between keys to find a global maxima solution.
 """
 
+
 class Playfair_SA(object):
 
     ngrams = {}

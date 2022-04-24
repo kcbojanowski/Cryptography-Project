@@ -38,9 +38,3 @@ def Decrypt_Vigenere(message, keyword):
         decrypt_mess = decrypt_mess + chr(dec + 65)
     return decrypt_mess.lower()
 
-
-if __name__ == '__main__':
-    mess = 'QWERTYUIOP'
-    key = 'crypti'
-    print(Encrypt_Vigenere(mess, key))
-    print(Decrypt_Vigenere(mess, key))
