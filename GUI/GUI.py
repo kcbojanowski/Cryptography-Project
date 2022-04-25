@@ -162,11 +162,17 @@ class SSSPage(Page):
         label = Label(sssframe, text="Shamir's Secret Sharing", font=("BebasNeue-Regular", 15), bg=colors[1])
         label.pack(side="top", fill="y", anchor=W, expand=False, pady=10, padx=20)
 
-        self.input_txt = Text(sssframe, height=12, width=30, bg=colors[2])
-        self.input_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+        key_label = Label(sssframe, text="enter pin:", font=("BebasNeue-Regular", 12), bg=colors[1])
+        key_label.pack(side="top", expand=False, pady=5)
+
+        self.input_txt = Entry(sssframe, width=30, bg=colors[2])
+        self.input_txt.pack(side="top", pady=1, padx=1)
+
+        key_label = Label(sssframe, text="Server console:", font=("BebasNeue-Regular", 12), bg=colors[1])
+        key_label.pack(side="top", expand=False, pady=5)
 
         self.server_txt = Text(sssframe, height=12, width=30, bg=colors[2])
-        self.server_txt.pack(side="top", fill="both", expand=True, pady=10, padx=10)
+        self.server_txt.pack(side="top", fill="both", expand=True, pady=5, padx=10)
 
         server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
                          bg=colors[4], command=lambda: self.server_start())
@@ -185,10 +191,9 @@ class SSSPage(Page):
         recon_btn.pack(side="right", expand=False, padx=5, pady=5)
 
     def sharing(self):
-        message_input = int(self.input_txt.get("1.0", END).strip())
+        message_input = int(self.input_txt.get())
         shares = sss.generate_shares(5, 3, message_input)
         print(f'Shares: {", ".join(str(share) for share in shares)}')
-        print(shares)
 
     def get_server_txt(self):
         return self.server_txt
