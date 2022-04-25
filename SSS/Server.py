@@ -1,6 +1,6 @@
 import socket
 import threading
-#from GUI.GUI import console_sending
+from GUI.GUI import SSSPage
 
 
 HEADER = 32
@@ -38,6 +38,10 @@ def send_msg():
     #conn.send("TEST".encode(FORMAT))
 
 
+def get_server():
+    return SERVER
+
+
 def start():
     print("[STARTING] server is starting...")
     #console_sending("test")
@@ -48,7 +52,8 @@ def start():
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 2}")
+        text = "[ACTIVE CONNECTIONS]" + str(threading.activeCount() - 2)
+
 
 
 if __name__ == '__main__':

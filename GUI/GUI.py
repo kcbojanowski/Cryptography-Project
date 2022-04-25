@@ -18,6 +18,7 @@ import os
 colors = ["#8ecae6", "#219ebc", "#f8f7ff", "#34a0a4", "#76c893"]
 # colors = [background, labels, textfields, page buttons, other buttons]
 
+
 class Page(Frame):
     def __init__(self, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
@@ -168,6 +169,12 @@ class SSSPage(Page):
         self.input_txt = Entry(sssframe, width=30, bg=colors[2])
         self.input_txt.pack(side="top", pady=1, padx=1)
 
+        shares_label = Label(sssframe, text="Shares:", font=("BebasNeue-Regular", 12), bg=colors[1])
+        shares_label.pack(side="top", expand=False, pady=5)
+
+        self.shares_txt = Text(sssframe, height=5, width=30, bg=colors[2])
+        self.shares_txt.pack(side="top", fill="both", expand=False, pady=5, padx=10)
+
         key_label = Label(sssframe, text="Server console:", font=("BebasNeue-Regular", 12), bg=colors[1])
         key_label.pack(side="top", expand=False, pady=5)
 
@@ -191,18 +198,24 @@ class SSSPage(Page):
         recon_btn.pack(side="right", expand=False, padx=5, pady=5)
 
     def sharing(self):
-        message_input = int(self.input_txt.get())
-        shares = sss.generate_shares(5, 3, message_input)
-        print(f'Shares: {", ".join(str(share) for share in shares)}')
+        share_input = self.input_txt.get().strip()
+        if share_input == "":
+            message("Warning", "Enter PIN first!")
+        else:
+            message_input = int(self.input_txt.get())
+            shares = sss.generate_shares(5, 3, message_input)
+            shares_str = "\n".join("\t\t\t" + str(share) for share in shares)
+            self.shares_txt.insert(END, shares_str)
 
-    def get_server_txt(self):
-        return self.server_txt
+
 
     def server_start(self):
         thread = threading.Thread(target=server.start)
         thread.start()
         message("Info", "Server is listening")
-
+        s = server.get_server()
+        self.server_txt.insert(END, "[STARTING] server is starting...\n")
+        self.server_txt.insert(END, "[LISTENING] Server is listening on " + s + "\n")
 
     def reconstruction(self):
         new = Toplevel(self, bg=colors[0])
