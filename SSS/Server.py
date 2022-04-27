@@ -1,6 +1,6 @@
 import socket
 import threading
-from GUI.GUI import SSSPage
+#from GUI.GUI import console_sending
 
 
 HEADER = 32
@@ -46,14 +46,15 @@ def start():
     print("[STARTING] server is starting...")
     #console_sending("test")
     #gui.console_sending("AAA")
+
     server.listen()
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
-        text = "[ACTIVE CONNECTIONS]" + str(threading.activeCount() - 2)
-
+        text = "\n[ACTIVE CONNECTIONS] " + str(threading.activeCount() - 2)
+        print(text)
 
 
 if __name__ == '__main__':

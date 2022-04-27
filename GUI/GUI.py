@@ -9,14 +9,28 @@ import Algorithms.Caesar as Caesar
 import Algorithms.Caesar_hack as Caesar_hack
 import Algorithms.Plots as Plots
 import RSA.RSA as rsa
-import SSS.Server as server
+#import SSS.Server as server
 import SSS.SSS as sss
+from Class import Client
+from copy import copy
 import ctypes
 import threading
+import socket
+import pickle
 import os
 
 colors = ["#8ecae6", "#219ebc", "#f8f7ff", "#34a0a4", "#76c893"]
 # colors = [background, labels, textfields, page buttons, other buttons]
+
+HEADER = 32
+PORT = 5050
+SERVER = socket.gethostbyname(socket.gethostname())
+ADDR = (SERVER, PORT)
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
 
 
 class Page(Frame):
@@ -157,6 +171,12 @@ class SSSPage(Page):
     def __init__(self, *args, **kwargs):
         Page.__init__(self, *args, **kwargs)
 
+        clients = []
+        clientSockets = []
+        clientAdresses = []
+
+        self.shares = []
+
         sssframe = Frame(self, bg=colors[0])
         sssframe.pack(side="top", fill="both", expand=True)
 
@@ -181,21 +201,104 @@ class SSSPage(Page):
         self.server_txt = Text(sssframe, height=12, width=30, bg=colors[2])
         self.server_txt.pack(side="top", fill="both", expand=True, pady=5, padx=10)
 
-        server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=12,
-                         bg=colors[4], command=lambda: self.server_start())
+        recon_btn = Button(sssframe, text="Reconstruction", font=("BebasNeue-Regular", 11), width=14,
+                          bg=colors[4], command=lambda: self.reconstruction())
+        recon_btn.pack(side="right", expand=False, padx=5, pady=5)
+
+        send_btn = Button(sssframe, text="Send shares", font=("BebasNeue-Regular", 11), width=14,
+                                 bg=colors[4], command=lambda: send_shares())
+        send_btn.pack(side="right", expand=False, padx=5, pady=5)
+
+        connections_btn = Button(sssframe, text="Active connections", font=("BebasNeue-Regular", 11), width=16,
+                            bg=colors[4], command=lambda: active_connections())
+        connections_btn.pack(side="right", expand=False, padx=5, pady=5)
+
+        server_btn = Button(sssframe, text="Start server", font=("BebasNeue-Regular", 11), width=14,
+                         bg=colors[4], command=lambda: server_start())
         server_btn.pack(side="right", expand=False, padx=5, pady=5)
 
-        sss_btn = Button(sssframe, text="Generate secrets", font=("BebasNeue-Regular", 11), width=12,
+        sss_btn = Button(sssframe, text="Generate secrets", font=("BebasNeue-Regular", 11), width=14,
                           bg=colors[4], command=lambda: self.sharing())
         sss_btn.pack(side="right", expand=False, padx=5, pady=5)
 
-        send_btn = Button(sssframe, text="Send message", font=("BebasNeue-Regular", 11), width=12,
-                            bg=colors[4], command=lambda: server.send_msg())
-        send_btn.pack(side="right", expand=False, padx=5, pady=5)
+        def handle_client(conn, addr):
+            #print(f"[NEW CONNECTION] {addr} connected.")
+            self.server_txt.insert(END, f"\n\n[NEW CONNECTION] {addr} connected.")
 
-        recon_btn = Button(sssframe, text="Reconstruction", font=("BebasNeue-Regular", 11), width=12,
-                          bg=colors[4], command=lambda: self.reconstruction())
-        recon_btn.pack(side="right", expand=False, padx=5, pady=5)
+            connected = True
+            while connected:
+                msg_length = conn.recv(HEADER).decode(FORMAT)
+                if msg_length:
+                    msg_length = int(msg_length)
+                    msg = conn.recv(msg_length).decode(FORMAT)
+                    if msg == DISCONNECT_MESSAGE:
+                        connected = False
+
+                    #print(f"[{addr}] {msg}")
+                    self.server_txt.insert(END, f"\n[{addr}] {msg}")
+                    conn.send("Msg received".encode(FORMAT))
+            conn.close()
+
+        '''
+        def get_server():
+            return SERVER
+            '''
+
+        def server_start():
+            thread = threading.Thread(target=start)
+            thread.start()
+            message("Info", "Server is listening")
+            #s = get_server()
+            #self.server_txt.insert(END, "[STARTING] server is starting...\n")
+            #self.server_txt.insert(END, "[LISTENING] Server is listening on " + s + "\n")
+
+        def start():
+            self.server_txt.insert(END, "[STARTING] server is starting...\n")
+            server.listen()
+            self.server_txt.insert(END, "[LISTENING] Server is listening on " + SERVER + "\n")
+
+            for i in range(0, 5):
+                conn, addr = server.accept()
+                client = Client(i)
+                clientSockets.append(conn)
+                clientAdresses.append(addr)
+                clients.append(client)
+                self.server_txt.insert(END, f"\n\n[NEW CONNECTION] {addr} connected.")
+            '''
+            while True:
+                conn, addr = server.accept()
+                clients.append((conn, addr))
+                thread = threading.Thread(target=handle_client, args=(conn, addr))
+                thread.start()
+                text = "\n[ACTIVE CONNECTIONS] " + str(threading.activeCount() - 2)
+                self.server_txt.insert(END, str(text))'''
+
+        def send_shares():
+            self.server_txt.insert(END, "\nSending data ... \n")
+            for i in range(0, 5):
+                client = clients[i]
+                c = clientSockets[i]
+
+                client.shareKey = self.shares[i]
+                client.shareOwnersAdresses = copy(clientAdresses)
+
+                dataString = pickle.dumps(client)
+                c.send(dataString)
+                c.close()
+            self.server_txt.insert(END, "Done\n")
+
+        def active_connections():
+            if threading.activeCount() >= 2:
+                self.server_txt.insert(END, "\n[ACTIVE CONNECTIONS] " + str(threading.activeCount() - 2) + "\n")
+                #for i in clients:
+                    #txt = "Client no." + str(i + 1) + " : IP: " + repr(clients[i[0]]) + " | Port: " + repr(clients[i[1]])
+                    #self.server_txt.insert(END, f"\n[{int(clients[i][0])}] \n")
+            else:
+                self.server_txt.insert(END, "\n[ACTIVE CONNECTIONS] 0\n")
+            #print(clients)
+
+
+
 
     def sharing(self):
         share_input = self.input_txt.get().strip()
@@ -203,19 +306,11 @@ class SSSPage(Page):
             message("Warning", "Enter PIN first!")
         else:
             message_input = int(self.input_txt.get())
-            shares = sss.generate_shares(5, 3, message_input)
-            shares_str = "\n".join("\t\t\t" + str(share) for share in shares)
+            self.shares = sss.generate_shares(5, 3, message_input)
+            tmp = self.shares
+            shares_str = "\n".join("\t\t\t" + str(share) for share in tmp)
             self.shares_txt.insert(END, shares_str)
 
-
-
-    def server_start(self):
-        thread = threading.Thread(target=server.start)
-        thread.start()
-        message("Info", "Server is listening")
-        s = server.get_server()
-        self.server_txt.insert(END, "[STARTING] server is starting...\n")
-        self.server_txt.insert(END, "[LISTENING] Server is listening on " + s + "\n")
 
     def reconstruction(self):
         new = Toplevel(self, bg=colors[0])
@@ -244,8 +339,9 @@ class SSSPage(Page):
         def reconstruct():
             shares = [(int(e1.get()), int(e1_2.get())), (int(e2.get()), int(e2_2.get())), (int(e3.get()), int(e3_2.get()))]
             out = sss.reconstruct_secret(shares)
-            recon_text.insert(END, out)
             recon_text.delete("1.0", END)
+            recon_text.insert(END, out)
+
 
 
 def console_sending(message):
@@ -361,7 +457,6 @@ class MainView(Frame):
         algo_btn.pack(side="top", anchor=NW, pady=10, padx=10)
         rsa_btn.pack(side="top", anchor=NW, pady=10, padx=10)
         sss_btn.pack(side="top", anchor=NW, pady=10, padx=10)
-
         p1.show()
 
 
