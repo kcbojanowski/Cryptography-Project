@@ -288,6 +288,8 @@ class SSSPage(Page):
             self.server_txt.insert(END, "Done\n")
 
         def active_connections():
+            self.server_txt.insert(END, "\n[ACTIVE CONNECTIONS] " + str(len(clients)))
+            '''
             if threading.activeCount() >= 2:
                 self.server_txt.insert(END, "\n[ACTIVE CONNECTIONS] " + str(threading.activeCount() - 2) + "\n")
                 #for i in clients:
@@ -295,7 +297,7 @@ class SSSPage(Page):
                     #self.server_txt.insert(END, f"\n[{int(clients[i][0])}] \n")
             else:
                 self.server_txt.insert(END, "\n[ACTIVE CONNECTIONS] 0\n")
-            #print(clients)
+            #print(clients)'''
 
 
 
